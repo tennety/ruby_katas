@@ -26,62 +26,8 @@ module Greed
       @player.dice_set.must_be_instance_of DiceSet
     end
 
-    describe "#roll_score" do
-      it "is 1000 if three 1s are rolled" do
-        @player.dice_set.stub :roll, [1, 1, 1] do
-          @player.roll_score.must_equal 1000
-        end
-      end
-      it "is 600 if three 6s are rolled" do
-        @player.dice_set.stub :roll, [6, 6, 6] do
-          @player.roll_score.must_equal 600
-        end
-      end
-      it "is 500 if three 5s are rolled" do
-        @player.dice_set.stub :roll, [5, 5, 5] do
-          @player.roll_score.must_equal 500
-        end
-      end
-      it "is 400 if three 4s are rolled" do
-        @player.dice_set.stub :roll, [4, 4, 4] do
-          @player.roll_score.must_equal 400
-        end
-      end
-      it "is 300 if three 3s are rolled" do
-        @player.dice_set.stub :roll, [3, 3, 3] do
-          @player.roll_score.must_equal 300
-        end
-      end
-      it "is 200 if three 2s are rolled" do
-        @player.dice_set.stub :roll, [2, 2, 2] do
-          @player.roll_score.must_equal 200
-        end
-      end
-      it "is 100 if one 1 is rolled" do
-        @player.dice_set.stub :roll, [1] do
-          @player.roll_score.must_equal 100
-        end
-      end
-      it "is 50 if one 5 is rolled" do
-        @player.dice_set.stub :roll, [5] do
-          @player.roll_score.must_equal 50
-        end
-      end
-      it "is 250 for throw: 5 1 3 4 1" do
-        @player.dice_set.stub :roll, [5, 1, 3, 4, 1] do
-          @player.roll_score.must_equal 250
-        end
-      end
-      it "is 1100 for throw: 1 1 1 3 1" do
-        @player.dice_set.stub :roll, [1, 1, 1, 3, 1] do
-          @player.roll_score.must_equal 1100
-        end
-      end
-      it "is 450 for throw: 2 4 4 5 4" do
-        @player.dice_set.stub :roll, [2, 4, 4, 5, 4] do
-          @player.roll_score.must_equal 450
-        end
-      end
+
+    describe "#take_turn" do
     end
   end
 
@@ -99,6 +45,64 @@ module Greed
         roll = @dice_set.roll
         roll.length.must_equal @dice_set.size
         roll.all?{|i| (1..6).must_include i}
+      end
+    end
+
+    describe "#score" do
+      it "is 1000 if three 1s are rolled" do
+        @dice_set.stub :roll, [1, 1, 1] do
+          @dice_set.score.must_equal 1000
+        end
+      end
+      it "is 600 if three 6s are rolled" do
+        @dice_set.stub :roll, [6, 6, 6] do
+          @dice_set.score.must_equal 600
+        end
+      end
+      it "is 500 if three 5s are rolled" do
+        @dice_set.stub :roll, [5, 5, 5] do
+          @dice_set.score.must_equal 500
+        end
+      end
+      it "is 400 if three 4s are rolled" do
+        @dice_set.stub :roll, [4, 4, 4] do
+          @dice_set.score.must_equal 400
+        end
+      end
+      it "is 300 if three 3s are rolled" do
+        @dice_set.stub :roll, [3, 3, 3] do
+          @dice_set.score.must_equal 300
+        end
+      end
+      it "is 200 if three 2s are rolled" do
+        @dice_set.stub :roll, [2, 2, 2] do
+          @dice_set.score.must_equal 200
+        end
+      end
+      it "is 100 if one 1 is rolled" do
+        @dice_set.stub :roll, [1] do
+          @dice_set.score.must_equal 100
+        end
+      end
+      it "is 50 if one 5 is rolled" do
+        @dice_set.stub :roll, [5] do
+          @dice_set.score.must_equal 50
+        end
+      end
+      it "is 250 for throw: 5 1 3 4 1" do
+        @dice_set.stub :roll, [5, 1, 3, 4, 1] do
+          @dice_set.score.must_equal 250
+        end
+      end
+      it "is 1100 for throw: 1 1 1 3 1" do
+        @dice_set.stub :roll, [1, 1, 1, 3, 1] do
+          @dice_set.score.must_equal 1100
+        end
+      end
+      it "is 450 for throw: 2 4 4 5 4" do
+        @dice_set.stub :roll, [2, 4, 4, 5, 4] do
+          @dice_set.score.must_equal 450
+        end
       end
     end
   end
