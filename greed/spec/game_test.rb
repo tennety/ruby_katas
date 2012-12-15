@@ -1,11 +1,6 @@
 require 'minitest/autorun'
 require 'pry'
-require_relative '../lib/game'
-require_relative '../lib/player'
-require_relative '../lib/dice_set'
-require_relative '../lib/score'
-
-puts MiniTest::Unit::VERSION
+require_relative '../greed'
 
 module Greed
   describe Game do
@@ -28,6 +23,9 @@ module Greed
       @player.dice_set.must_be_instance_of DiceSet
     end
 
+    it "starts with a total score of 0" do
+      @player.total.must_equal 0
+    end
 
     describe "#take_turn" do
     end
