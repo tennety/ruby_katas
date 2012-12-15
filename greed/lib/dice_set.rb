@@ -9,9 +9,5 @@ module Greed
     def roll
       (1..size).map{|i| rand(6) + 1}
     end
-
-    def score
-      Score.new(roll).score
-    end
   end
 end
