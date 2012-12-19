@@ -1,5 +1,5 @@
 module Greed
-  class Score
+  class Scorer
     attr_reader :roll, :occurrences_by_number
 
     SPECIAL_THREES = { 1 => 1000,
@@ -18,9 +18,9 @@ module Greed
     end
 
     def non_scoring_dice
-      @occurrences_by_number.dup.delete_if do |face_val, cnt|
-        SPECIAL_ONES.keys.include?(face_val) || cnt == 3
-      end.keys.length
+      occurrences_by_number.reject do |face_val, cnt|
+        has_special_scoring?(face_val) || cnt == 3
+      end.length
     end
 
     def count_specials
@@ -36,8 +36,13 @@ module Greed
 
     def count_others
       occurrences_by_number.select do |val, count|
-        !SPECIAL_ONES.keys.include?(val) && count == 3
+        !has_special_scoring?(val) && count == 3
       end.inject(0){|sum, pair| sum + pair[0] * 100}
+    end
+
+    private
+    def has_special_scoring?(value)
+      SPECIAL_ONES.keys.include?(value)
     end
   end
 end
