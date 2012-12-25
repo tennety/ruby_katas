@@ -10,7 +10,7 @@ module Greed
 
     def roll
       @last_roll = dice_set.roll
-      @total += last_score
+      update_total
       last_size = @dice_set.size
       @dice_set = DiceSet.new(last_size - scorer.non_scoring_dice)
     end
@@ -21,6 +21,20 @@ module Greed
 
     def scorer
       Scorer.new(last_roll)
+    end
+
+    def turn_over?
+      last_score.zero?
+    end
+    alias_method :last_score_zero?, :turn_over?
+
+    private
+    def update_total
+      if last_score_zero?
+        @total = 0
+      else
+        @total += last_score
+      end
     end
   end
 end

@@ -41,11 +41,26 @@ module Greed
         end
       end
 
-      it "adds the score to the player's total" do
-        @player.total.must_equal 0
-        @player.dice_set.stub(:roll, [5]) do
-          @player.roll
-          @player.total.must_equal 50
+      describe "with non-zero score" do
+        it "adds the score to the player's total" do
+          @player.total.must_equal 0
+          @player.stub(:last_score, 50) do
+            @player.roll
+            @player.total.must_equal 50
+          end
+        end
+      end
+
+      describe "with zero score" do
+        it "zeroes the total" do
+          @player.stub(:last_score, 50) do
+            @player.roll
+            @player.total.must_equal 50
+          end
+          @player.stub(:last_score, 0) do
+            @player.roll
+            @player.total.must_equal 0
+          end
         end
       end
 
@@ -80,6 +95,26 @@ module Greed
         @player.dice_set.stub(:roll, [5]) do
           @player.roll
           @player.scorer.roll.must_equal [5]
+        end
+      end
+    end
+
+    describe "#turn_over?" do
+      describe "when the last roll is non-zero" do
+        it "returns false" do
+          @player.stub(:last_score, 50) do
+            @player.roll
+            @player.turn_over?.must_equal false
+          end
+        end
+      end
+
+      describe "when the last roll is zero" do
+        it "returns true" do
+          @player.stub(:last_score, 0) do
+            @player.roll
+            @player.turn_over?.must_equal true
+          end
         end
       end
     end
