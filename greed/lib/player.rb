@@ -1,16 +1,17 @@
 module Greed
   class Player
-    attr_reader :dice_set, :total, :last_roll
+    attr_reader :dice_set, :last_roll
+    attr_accessor :total
 
     def initialize
       @dice_set = DiceSet.new(5)
       @total = 0
       @last_roll = []
+      @in_the_game = false
     end
 
     def roll
       @last_roll = dice_set.roll
-      update_total
       last_size = @dice_set.size
       @dice_set = DiceSet.new(last_size - scorer.non_scoring_dice)
     end
@@ -23,18 +24,12 @@ module Greed
       Scorer.new(last_roll)
     end
 
-    def turn_over?
-      last_score.zero?
+    def in_the_game?
+      @in_the_game
     end
-    alias_method :last_score_zero?, :turn_over?
 
-    private
-    def update_total
-      if last_score_zero?
-        @total = 0
-      else
-        @total += last_score
-      end
+    def mark_as_in_the_game
+      @in_the_game = true
     end
   end
 end

@@ -31,6 +31,17 @@ module Greed
       @player.last_roll.must_equal []
     end
 
+    it "starts as not in the game" do
+      @player.in_the_game?.must_equal false
+    end
+
+    describe "#mark_as_in_the_game" do
+      it "sets the player as in the game" do
+        @player.mark_as_in_the_game
+        @player.in_the_game?.must_equal true
+      end
+    end
+
     describe "#roll" do
       it "rolls the dice set" do
         @mock_dice = MiniTest::Mock.new
@@ -38,29 +49,6 @@ module Greed
           @mock_dice.expect(:roll, [])
           @player.roll
           @mock_dice.verify
-        end
-      end
-
-      describe "with non-zero score" do
-        it "adds the score to the player's total" do
-          @player.total.must_equal 0
-          @player.stub(:last_score, 50) do
-            @player.roll
-            @player.total.must_equal 50
-          end
-        end
-      end
-
-      describe "with zero score" do
-        it "zeroes the total" do
-          @player.stub(:last_score, 50) do
-            @player.roll
-            @player.total.must_equal 50
-          end
-          @player.stub(:last_score, 0) do
-            @player.roll
-            @player.total.must_equal 0
-          end
         end
       end
 
@@ -95,26 +83,6 @@ module Greed
         @player.dice_set.stub(:roll, [5]) do
           @player.roll
           @player.scorer.roll.must_equal [5]
-        end
-      end
-    end
-
-    describe "#turn_over?" do
-      describe "when the last roll is non-zero" do
-        it "returns false" do
-          @player.stub(:last_score, 50) do
-            @player.roll
-            @player.turn_over?.must_equal false
-          end
-        end
-      end
-
-      describe "when the last roll is zero" do
-        it "returns true" do
-          @player.stub(:last_score, 0) do
-            @player.roll
-            @player.turn_over?.must_equal true
-          end
         end
       end
     end
@@ -184,6 +152,99 @@ module Greed
       end
       it "is 1 for throw: 2 4 4 5 4" do
         Scorer.new([2, 4, 4, 5, 4]).non_scoring_dice.must_equal 1
+      end
+    end
+  end
+
+  describe Turn do
+    before do
+      @turn = Turn.new(Player.new)
+    end
+    it "starts with a player" do
+      @turn.player.must_be_instance_of Player
+    end
+
+    it "starts with a running total of zero" do
+      @turn.running_total.must_equal 0
+    end
+
+    describe "#keep_going" do
+      describe "with non-zero score" do
+        it "adds the score to the running total" do
+          @turn.running_total.must_equal 0
+          @turn.player.stub(:last_score, 50) do
+            @turn.keep_going
+            @turn.running_total.must_equal 50
+          end
+        end
+      end
+
+      describe "with zero score" do
+        it "zeroes the running total" do
+          @turn.player.stub(:last_score, 50) do
+            @turn.keep_going
+            @turn.running_total.must_equal 50
+          end
+          @turn.player.stub(:last_score, 0) do
+            @turn.keep_going
+            @turn.running_total.must_equal 0
+          end
+        end
+      end
+
+      describe "when running total exceeds 300" do
+        it "marks the player as in the game" do
+          @turn.player.stub(:last_score, 1000) do
+            @turn.keep_going
+            @turn.player.in_the_game?.must_equal true
+          end
+        end
+      end
+    end
+
+    describe "#over?" do
+      describe "when the last roll is non-zero" do
+        it "returns false" do
+          @turn.player.stub(:last_score, 50) do
+            @turn.keep_going
+            @turn.over?.must_equal false
+          end
+        end
+      end
+
+      describe "when the last roll is zero" do
+        it "returns true" do
+          @turn.player.stub(:last_score, 0) do
+            @turn.keep_going
+            @turn.over?.must_equal true
+          end
+        end
+      end
+    end
+
+    describe "#stop" do
+      describe "when the player is in the game" do
+        it "adds the running total to the player's total" do
+          @turn.player.stub(:in_the_game?, true) do
+            @turn.player.stub(:last_score, 100) do
+              @turn.keep_going
+              @turn.stop
+              @turn.player.total.must_equal 100
+            end
+          end
+        end
+      end
+
+      describe "when the player is not in the game" do
+        it "does nothing" do
+          @turn.player.stub(:in_the_game?, false) do
+            @turn.player.stub(:last_score, 100) do
+              @turn.keep_going
+              @turn.stop
+              @turn.player.total.must_equal 0
+            end
+          end
+        end
       end
     end
   end
