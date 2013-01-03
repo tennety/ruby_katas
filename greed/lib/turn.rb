@@ -20,7 +20,7 @@ module Greed
     end
 
     def over?
-      player.last_score.zero?
+      (!player.starting? && player.last_score.zero?) || player.wants_to_stop?
     end
 
     def stop

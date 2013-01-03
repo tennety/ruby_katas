@@ -10,7 +10,13 @@ module Greed
 
     it "starts with a given number of players" do
       @game.players.length.must_equal 3
-      @game.players.all?{|p| p.must_be_instance_of Player }
+      @game.players.all?{|p| p.must_be_kind_of Player }
+    end
+
+    describe "#create_round" do
+      it "creates a round" do
+        @game.create_round.must_be_kind_of Round
+      end
     end
   end
 
@@ -20,7 +26,7 @@ module Greed
     end
 
     it "starts with a set of dice" do
-      @player.dice_set.must_be_instance_of DiceSet
+      @player.dice_set.must_be_kind_of DiceSet
     end
 
     it "starts with a total score of 0" do
@@ -83,6 +89,17 @@ module Greed
         @player.dice_set.stub(:roll, [5]) do
           @player.roll
           @player.scorer.roll.must_equal [5]
+        end
+      end
+    end
+
+    describe "#with_new_dice_set" do
+      it "resets the player's dice set to the default" do
+        @player.stub(:last_roll, [1,1,1,2,3]) do
+          @player.roll
+          @player.dice_set.size.must_equal 3
+          @player.with_new_dice_set
+          @player.dice_set.size.must_equal 5
         end
       end
     end
@@ -161,7 +178,7 @@ module Greed
       @turn = Turn.new(Player.new)
     end
     it "starts with a player" do
-      @turn.player.must_be_instance_of Player
+      @turn.player.must_be_kind_of Player
     end
 
     it "starts with a running total of zero" do
@@ -203,20 +220,35 @@ module Greed
     end
 
     describe "#over?" do
-      describe "when the last roll is non-zero" do
-        it "returns false" do
-          @turn.player.stub(:last_score, 50) do
-            @turn.keep_going
-            @turn.over?.must_equal false
-          end
-        end
-      end
-
       describe "when the last roll is zero" do
         it "returns true" do
           @turn.player.stub(:last_score, 0) do
             @turn.keep_going
             @turn.over?.must_equal true
+          end
+        end
+      end
+
+      describe "when the last roll is non-zero" do
+        describe "when the player does not want to stop" do
+          it "returns false" do
+            @turn.player.stub(:last_score, 50) do
+              @turn.player.stub(:wants_to_stop?, false) do
+                @turn.keep_going
+                @turn.over?.must_equal false
+              end
+            end
+          end
+        end
+
+        describe "when the player wants to stop" do
+          it "returns true" do
+            @turn.player.stub(:last_score, 50) do
+              @turn.player.stub(:wants_to_stop?, true) do
+                @turn.keep_going
+                @turn.over?.must_equal true
+              end
+            end
           end
         end
       end
@@ -243,6 +275,51 @@ module Greed
               @turn.stop
               @turn.player.total.must_equal 0
             end
+          end
+        end
+      end
+    end
+  end
+
+  describe Round do
+    before do
+      @players = Array.new(2, Player.new)
+      @round = Round.new(@players)
+    end
+
+    describe "#play" do
+      it "creates a turn for each player" do
+        turns = @round.play
+        turns.map(&:player).sort.must_equal @players.sort
+      end
+
+      describe "when the turn is over" do
+        it "stops the turn" do
+          turn = MiniTest::Mock.new
+          turn.expect(:over?, true)
+          turn.expect(:stop, nil)
+          @players.stub(:collect, [turn]) do
+            @round.play
+            turn.verify
+          end
+        end
+      end
+
+      describe "when the turn is not over" do
+        it "keeps the turn going" do
+          turn = MiniTest::Mock.new
+
+          #first "until" call
+          turn.expect(:over?, false)
+          turn.expect(:keep_going, nil)
+
+          #next "until" call
+          turn.expect(:over?, true)
+          turn.expect(:stop, nil)
+
+          @players.stub(:collect, [turn]) do
+            @round.play
+            turn.verify
           end
         end
       end
