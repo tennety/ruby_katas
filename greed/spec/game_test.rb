@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 require 'pry'
-require_relative '../greed'
+require 'greed'
 
 module Greed
   describe Game do
