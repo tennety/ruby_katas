@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..','lib'))
 
 require 'optparse'
 require 'methadone'
@@ -18,7 +19,7 @@ class App
 
   # Declare command-line interface here
 
-  # description "one line description of your app"
+  description "The command line interface to the Greed game"
   #
   # Accept flags via:
   # on("--flag VAL","Some flag")
