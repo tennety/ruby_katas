@@ -1,14 +1,16 @@
 module Greed
   class Turn
-    attr_reader :player, :running_total
+    attr_reader :player, :position, :running_total
 
-    def initialize(player)
+    def initialize(player, position = 1)
       @player = player
+      @position = position
       @running_total = 0
     end
 
     def keep_going
       player.roll
+      ui.write "...rolled #{player.last_roll} for #{player.last_score} points"
       if player.last_score.zero?
         @running_total = 0
       else
@@ -25,6 +27,13 @@ module Greed
 
     def stop
       player.total += running_total if player.in_the_game?
+      ui.write "Last turn total: #{running_total}"
+      ui.write "Player's total: #{player.total}"
+    end
+
+    private
+    def ui
+      Options.options.ui
     end
   end
 end

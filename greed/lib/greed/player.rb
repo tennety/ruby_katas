@@ -45,10 +45,6 @@ module Greed
       @rolls >= @stop
     end
 
-    def has_rolled?
-      @rolls > 0
-    end
-
     def with_new_dice_set
       @dice_set = DiceSet.new(5)
       @rolls = 0

@@ -1,40 +1,41 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..','lib'))
 
 require 'optparse'
 require 'methadone'
 require 'greed'
+# require 'pry'
 
 class App
   include Methadone::Main
   include Methadone::CLILogging
 
-  main do # Add args you want: |like,so|
-    # your program code here
-    # You can access CLI options via
-    # the options Hash
+  main do |num_players|
+    initialize_game(num_players)
+    play_game!
   end
 
-  # supplemental methods here
+  def self.initialize_game(num_players)
+    Greed::Options.configure do |config|
+      config.ui = Greed::UI::CLI.new
+    end
+    @game = Greed::Game.new(num_players.to_i)
+  end
+
+  def self.play_game!
+    until @game.players.any?(&:winning?)
+      @game.create_round.play
+    end
+  end
+
+  def self.ui
+    Greed::Options.options.ui
+  end
 
   # Declare command-line interface here
 
   description "The command line interface to the Greed game"
-  #
-  # Accept flags via:
-  # on("--flag VAL","Some flag")
-  # options[flag] will contain VAL
-  #
-  # Specify switches via:
-  # on("--[no-]switch","Some switch")
-  #
-  # Or, just call OptionParser methods on opts
-  #
-  # Require an argument
-  # arg :some_arg 
-  #
-  # # Make an argument optional
-  # arg :optional_arg, :optional
+
+  arg :num_players, "The number of players you would like in the game."
 
   version Greed::VERSION
 

@@ -6,14 +6,24 @@ module Greed
     end
 
     def play
-      turns = @players.collect do |player|
-        Turn.new(player)
-      end
+      turns = create_turns
       turns.each do |turn|
+        ui.write "Player #{turn.position}'s turn:"
         until turn.over?
           turn.keep_going
         end
         turn.stop
+      end
+    end
+
+    private
+    def ui
+      Options.options.ui
+    end
+
+    def create_turns
+      @players.map.with_index do |player, i|
+        Turn.new(player, i)
       end
     end
   end

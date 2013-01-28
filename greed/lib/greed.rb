@@ -1,2 +1,3 @@
 lib = File.dirname(__FILE__)
-Dir.glob(File.join(lib, 'greed', '*.rb')).each{|f| require f}
+require "#{lib}/greed/options"
+Dir.glob(File.join(lib, 'greed', '**', '*.rb')).each{|f| require f}
