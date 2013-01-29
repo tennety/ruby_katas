@@ -31,13 +31,13 @@ module Greed
         else
           count * SPECIAL_ONES[val]
         end
-      end.inject(:+)
+      end.inject(:+).to_i
     end
 
     def count_others
       occurrences_by_number.select do |val, count|
         !has_special_scoring?(val) && count == 3
-      end.inject(0){|sum, pair| sum + pair[0] * 100}
+      end.map{|num, count| num * 100}.inject(:+).to_i
     end
 
     private

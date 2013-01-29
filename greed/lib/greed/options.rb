@@ -8,8 +8,8 @@ module Greed
       yield @options
     end
 
-    def self.options
-      @options
+    def self.method_missing(method, *args, &block)
+      @options.send(method, *args, &block)
     end
   end
 end

@@ -8,7 +8,7 @@ module Greed
     def play
       turns = create_turns
       turns.each do |turn|
-        ui.write "Player #{turn.position}'s turn:"
+        ui.write "\nPlayer #{turn.position}'s turn:"
         until turn.over?
           turn.keep_going
         end
@@ -18,7 +18,7 @@ module Greed
 
     private
     def ui
-      Options.options.ui
+      Options.ui
     end
 
     def create_turns

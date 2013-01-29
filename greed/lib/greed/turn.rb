@@ -18,6 +18,7 @@ module Greed
       end
       if !player.in_the_game? && @running_total >= 300
         player.mark_as_in_the_game
+        ui.write "Player #{position} has entered the game!"
       end
     end
 
@@ -33,7 +34,7 @@ module Greed
 
     private
     def ui
-      Options.options.ui
+      Options.ui
     end
   end
 end

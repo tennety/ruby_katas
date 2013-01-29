@@ -28,7 +28,7 @@ class App
   end
 
   def self.ui
-    Greed::Options.options.ui
+    Greed::Options.ui
   end
 
   # Declare command-line interface here

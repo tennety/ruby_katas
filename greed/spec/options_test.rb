@@ -7,7 +7,7 @@ module Greed
         Options.configure do |config|
           config.foo = "bar"
         end
-        Options.options.foo.must_equal "bar"
+        Options.foo.must_equal "bar"
       end
     end
   end

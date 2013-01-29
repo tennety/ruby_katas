@@ -13,7 +13,7 @@ module Greed
 
     private
     def ui
-      Options.options.ui
+      Options.ui
     end
   end
 end
