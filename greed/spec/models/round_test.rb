@@ -16,7 +16,6 @@ module Greed
       describe "when the turn is over" do
         it "stops the turn" do
           turn = MiniTest::Mock.new
-          turn.expect(:position, 1)
 
           turn.expect(:over?, true)
           turn.expect(:stop, nil)
@@ -31,7 +30,6 @@ module Greed
       describe "when the turn is not over" do
         it "keeps the turn going" do
           turn = MiniTest::Mock.new
-          turn.expect(:position, 1)
 
           #first "until" call
           turn.expect(:over?, false)
